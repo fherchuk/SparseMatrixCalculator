@@ -130,14 +130,23 @@ void Matrix::readFile(std::string file_name) {
         j = 0;
         while (ss >> token) {
             // Adds the converted value to the row
-            if (token > 0) {
+            if (token != 0) {
                 addElement(token, i, j);
             }
             j++;
         }
         i++;
     }
-
+    
     setMaxRow(i-1);
     setMaxCol(j-1);
+ 
+Matrix Matrix::matrixAddition(Matrix matrix1, Matrix matrix2){
+    
+   while 
+        
+       
+    
 }
+   
+
