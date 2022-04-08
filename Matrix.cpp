@@ -1,50 +1,60 @@
 #include "Matrix.h"
 #include <iostream>
 
+//Hi
 
 //Node constructor
-Node::Node(int data, int row, int col, Node* next, Node* previous){
+Node::Node(int data, int row, int col, Node* next, Node* previous) {
     this->data = data;
     this->next = next;
     this->previous = previous;
     this->row = row;
     this->col = col;
+    this->below = nullptr;
 }
 
 //Matrix constructor
-Matrix::Matrix(){
+Matrix::Matrix() {
     this->head = nullptr;
+    this->head_vertical = nullptr;
     this->tail = nullptr;
     this->list_size = 0;
-    this->max_rows = 0;
-    this->max_cols = 0;
+    this->max_row_index = 0;
+    this->max_col_index = 0;
+    this->scaling_factor = 0;
 }
 
 //Getter for number of non-zero matrix elements
-int Matrix::getSize(){
+int Matrix::getSize() {
     return this->list_size;
 }
 
 //Setter for row length
 void Matrix::setMaxRow(int row) {
-    this->max_rows = row;
+    this->max_row_index = row;
 }
 
 //Setter for column length
 void Matrix::setMaxCol(int col) {
-    this->max_cols = col;
+    this->max_col_index = col;
 }
 
 //Function to add an element
-void Matrix::addElement(int data, int row, int col){
+void Matrix::addElement(int data, int row, int col) {
 
     //Set the new 
-    if (row > max_rows) {
+    if (row > max_row_index) {
         setMaxRow(row);
     }
 
-    if (col > max_cols) {
+    if (col > max_col_index) {
         setMaxCol(col);
+    }
+    if (this->max_col_index > this->max_row_index) {
+        this->scaling_factor = this->max_col_index + 1;
+    }
+    else {
+        this->scaling_factor = this->max_row_index + 1;
     }
 
     Node* new_node = new Node(data, row, col, nullptr, nullptr);
@@ -54,10 +64,10 @@ void Matrix::addElement(int data, int row, int col){
         return;
     }
     Node* curr = this->head;
-    while (curr->next != nullptr && (curr->row * 10 + curr->col < new_node->row * 10 + new_node->col)) {
+    while (curr->next != nullptr && (curr->row * this->scaling_factor + curr->col < new_node->row * this->scaling_factor + new_node->col)) {
         curr = curr->next;
     }
-    if (curr->row*10+curr->col == new_node->row*10+new_node->col) {
+    if (curr->row * this->scaling_factor + curr->col == new_node->row * this->scaling_factor + new_node->col) {
         if (curr->previous != nullptr) {
             curr->previous->next = new_node;
         }
@@ -72,7 +82,7 @@ void Matrix::addElement(int data, int row, int col){
             this->tail = new_node;
         }
     }
-    else if (curr->row*10+curr->col >= new_node->row*10+new_node->col) {
+    else if (curr->row * this->scaling_factor + curr->col >= new_node->row * this->scaling_factor + new_node->col) {
         if (curr->previous != nullptr) {
             curr->previous->next = new_node;
             new_node->previous = curr->previous;
@@ -91,8 +101,10 @@ void Matrix::addElement(int data, int row, int col){
 
 void Matrix::printMatrix() {
     Node* curr = this->head;
-    for (int i = 0; i <= this->max_rows; i++) {
-        for (int j = 0; j <= this->max_cols; j++) {
+    curr = this->head;
+
+    for (int i = 0; i <= this->max_row_index; i++) {
+        for (int j = 0; j <= this->max_col_index; j++) {
             if (curr->row == i && curr->col == j) {
                 std::cout << curr->data << " ";
                 if (curr->next != nullptr) {
@@ -108,6 +120,9 @@ void Matrix::printMatrix() {
 }
 
 void Matrix::readFile(std::string file_name) {
+
+    //Add delete function for previous matrix
+
     // Create the input filestream - opens the file & prepares it for reading
     std::ifstream file(file_name);
 
@@ -116,9 +131,9 @@ void Matrix::readFile(std::string file_name) {
 
     // Temporary string to hold a single line of the file
     std::string str;
-    
+
     int i = 0;
-    int j;
+    int j = 0;
     // Reads all lines in the file, 1 at at time
     while (std::getline(file, str)) {
         // Converts our string into a stringstream
@@ -130,7 +145,7 @@ void Matrix::readFile(std::string file_name) {
         j = 0;
         while (ss >> token) {
             // Adds the converted value to the row
-            if (token > 0) {
+            if (token != 0) {
                 addElement(token, i, j);
             }
             j++;
@@ -138,6 +153,86 @@ void Matrix::readFile(std::string file_name) {
         i++;
     }
 
-    setMaxRow(i-1);
-    setMaxCol(j-1);
+    setMaxRow(i - 1);
+    setMaxCol(j - 1);
+
+    Node* temp1 = this->head;
+    this->head_vertical = this->head;
+    while (temp1 != nullptr) {
+        Node* temp2 = this->head;
+        while (temp2 != nullptr) {
+            if (temp2->row + temp2->col * this->scaling_factor > temp1->row + temp1->col * this->scaling_factor && (temp1->below == nullptr || temp2->row + temp2->col * this->scaling_factor < temp1->below->row + temp1->below->col * this->scaling_factor)) {
+                temp1->below = temp2;
+            }
+            if (temp2->row + temp2->col * this->scaling_factor < this->head_vertical->row + this->head_vertical->col * this->scaling_factor) {
+                this->head_vertical = temp2;
+            }
+            temp2 = temp2->next;
+        }
+        temp1 = temp1->next;
+    }
+}
+
+int Matrix::getMaxRow() {
+    return this->max_row_index + 1;
+}
+
+int Matrix::getMaxCol() {
+    return this->max_col_index + 1;
+}
+
+Matrix MatrixOp::matrixMultiply(Matrix one, Matrix two) {
+    Matrix result;
+    if (one.max_col_index != two.max_row_index) {
+        std::cout << "Matrix dimensions do not match.";
+        return result;
+    }
+    else {
+        Node* curr_one = one.head;
+        Node* curr_two = two.head_vertical;
+        for (int i = 0; i <= one.max_row_index; i++) {
+            for (int j = 0; j <= two.max_col_index; j++) {
+                if (curr_one == nullptr || curr_two == nullptr) {
+                    break;
+                }
+                Node* curr_one_a = curr_one;
+                int sum = 0;
+                Node* curr_two_a = curr_two;
+                for (int k = 0; k <= one.max_col_index; k++) {
+                    if (curr_one_a != nullptr && curr_two_a != nullptr && curr_one_a->row == i && curr_one_a->col == k && curr_two_a->row == k && curr_two_a->col == j) {
+                        sum += curr_one_a->data * curr_two_a->data;
+                        curr_one_a = curr_one_a->next;
+                        curr_two_a = curr_two_a->below;
+                    }
+                    if (curr_one_a != nullptr && curr_two_a != nullptr && curr_one_a->row == i && curr_two_a->col == j) {
+                        if (curr_one_a->col <= k) {
+                            curr_one_a = curr_one_a->next;
+                        }
+                        if (curr_two_a->row <= k) {
+                            curr_two_a = curr_two_a->below;
+                        }
+                    }
+                    else {
+                        break;
+                    }
+                }
+                while (curr_two != nullptr && curr_two->col <= j) {
+                    curr_two = curr_two->below;
+                }
+                if (sum != 0) {
+                    result.addElement(sum, i, j);
+                }
+            }
+            while (curr_one != nullptr && curr_one->row <= i) {
+                curr_one = curr_one->next;
+            }
+            curr_two = two.head_vertical;
+        }
+    }
+
+    return result;
+}
+
+int MatrixOp::determinant(Matrix matrix) {
+    return 1;
 }
