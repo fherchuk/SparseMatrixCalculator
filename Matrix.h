@@ -31,7 +31,6 @@ private:
     int list_size;
     int max_row_index;
     int max_col_index;
-    int scaling_factor;
 
     //Made these private since they are only needed in the context of the public member functions
     void setMaxRow(int row);
@@ -55,14 +54,9 @@ public:
     //Reads a text file
     void readFile(std::string file);
 
-    //Checks to see if two matrices can be multiplied and returns result if possible
+    //Checks to see if two matrices can be multiplied and prints result if possible
+    void matrixMultiply(Matrix one, Matrix two);
+    //Checks to see if two matrices can be added and prints result if possible
+    void matrixAddition(Matrix one, Matrix two);
 
-    friend class MatrixOp;
-};
-
-class MatrixOp
-{
-public:
-    Matrix matrixMultiply(Matrix one, Matrix two);
-    int determinant(Matrix one);
 };
