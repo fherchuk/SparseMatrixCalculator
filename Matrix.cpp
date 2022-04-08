@@ -222,18 +222,6 @@ void Matrix::matrixMultiply(Matrix one, Matrix two) {
     result.printMatrix();
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
 void Matrix::matrixAddition(Matrix one, Matrix two) {
     Matrix result;
     if (one.max_row_index != two.max_row_index || one.max_col_index != two.max_col_index){
