@@ -193,7 +193,7 @@ void Matrix::matrixMultiply(Matrix one, Matrix two) {
                         curr_one_a = curr_one_a->next;
                         curr_two_a = curr_two_a->below;
                     }
-                    if (curr_one_a != nullptr && curr_two_a != nullptr) {
+                    if (curr_one_a != nullptr && curr_two_a != nullptr && curr_one_a->row == i && curr_two_a->col == j) {
                         if (curr_one_a->col <= k) {
                             curr_one_a = curr_one_a->next;
                         }
@@ -205,14 +205,14 @@ void Matrix::matrixMultiply(Matrix one, Matrix two) {
                         break;
                     }
                 }
-                while (curr_two != nullptr && curr_two->col != j + 1) {
+                while (curr_two != nullptr && curr_two->col <= j) {
                     curr_two = curr_two->below;
                 }
-                if (sum > 0) {
+                if (sum != 0) {
                     result.addElement(sum, i, j);
                 }
             }
-            while (curr_one != nullptr && curr_one->row != i + 1) {
+            while (curr_one != nullptr && curr_one->row <= i) {
                 curr_one = curr_one->next;
             }
             curr_two = two.head_vertical;
@@ -235,16 +235,24 @@ void Matrix::matrixAddition(Matrix one, Matrix two) {
                 int sum = 0;
                 if (curr_one->row == i && curr_one->col == j && curr_two->row == i && curr_two->col == j){
                     sum = curr_one->data + curr_two->data;
-                    curr_one = curr_one->next;
-                    curr_two = curr_two->next;
+                    if (curr_one->next != nullptr){
+                         curr_one = curr_one->next;
+                    }
+                    if (curr_two->next != nullptr){
+                         curr_two = curr_two->next;
+                    }
                 }
-                else if (curr_one->row == i && curr_one->col == j && (curr_two->row != i || curr_two->col != j || curr_two == nullptr)){
+                else if ((curr_one->row == i && curr_one->col == j) && (curr_two->row != i || curr_two->col != j)){
                     sum = curr_one->data;
-                    curr_one = curr_one->next;
+                    if (curr_one->next != nullptr){
+                         curr_one = curr_one->next;
+                    }
                 }
-                else if ((curr_one->row != i || curr_one->col != j || curr_one == nullptr) && curr_two->row == i && curr_two->col == j){
+                else if ((curr_one->row != i || curr_one->col != j) && curr_two->row == i && curr_two->col == j){
                     sum = curr_two->data;
-                    curr_two = curr_two->next;
+                    if (curr_two->next != nullptr){
+                         curr_two = curr_two->next;
+                    }
                 }
                 if (sum > 0){
                     result.addElement(sum, i, j);
