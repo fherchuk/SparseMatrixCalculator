@@ -105,11 +105,9 @@ void Matrix::printMatrix() {
 
     for (int i = 0; i <= this->max_row_index; i++) {
         for (int j = 0; j <= this->max_col_index; j++) {
-            if (curr->row == i && curr->col == j) {
+            if (curr != nullptr && curr->row == i && curr->col == j) {
                 std::cout << curr->data << " ";
-                if (curr->next != nullptr) {
-                    curr = curr->next;
-                }
+                curr = curr->next;
             }
             else {
                 std::cout << 0 << " ";
@@ -183,6 +181,8 @@ int Matrix::getMaxCol() {
 
 Matrix Matrix::matrixMultiply(Matrix one, Matrix two) {
     Matrix result;
+    result.setMaxRow(one.max_row_index);
+    result.setMaxCol(two.max_col_index);
     if (one.max_col_index != two.max_row_index) {
         std::cout << "Matrix dimensions do not match.";
         return result;
