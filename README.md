@@ -11,21 +11,6 @@ Using a linked list allows for only having to store the nonzero elements and the
 ![Alt Text](https://matteding.github.io/images/coo.gif)
 
 GIF Credit: https://matteding.github.io/2019/04/25/sparse-matrices/
-
-## Prerequisites
-
-### Linux (apt package manager)
-
-1. **Install g++ and SFML library via terminal**
-
-    `sudo apt update`
-
-    `sudo apt install g++ && libsfml-dev`
-
-### MacOS (coming soon)
-
-### Windows (coming soon)
-
 ## How to Compile and Run
 
 ### Linux (Debian-based)
