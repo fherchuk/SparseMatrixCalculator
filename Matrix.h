@@ -2,61 +2,63 @@
 #include <fstream>
 #include <sstream>
 #include <cmath>
+#include "Node.h"
 
-class Node
-{
-private:
-    //The data members of Node consist of a piece of data, their row and column, and next and previous pointers.
-    int data;
-    int row;
-    int col;
-    Node* next;
-    Node* previous;
-    Node* below;
-public:
-    //The only constructor takes in parameters to fully define all data members of a Node.
-    Node(int data, int row, int col, Node* next, Node* previous);
-
-    friend class Matrix;
-    friend class MatrixOp;
-};
-
+//Linked list matrix class
 class Matrix
 {
 private:
-    //The data members of Matrix (Linked List) are head and tail pointers and a size variable.
+
+    //Head and head_vertical pointers initialize position depending on row-wise or column-wise traversal. Tail pointer is superfluous for now.
     Node* head;
     Node* head_vertical;
-    Node* tail;
+    //Node* tail;
+
+    //List_size keeps track of the number of non-zero elements in the list matrix
     int list_size;
+
+    //Max_row_index and max_col_index keep track of the size of the matrix list, regardless of actual list size.
     int max_row_index;
     int max_col_index;
 
-    //Made these private since they are only needed in the context of the public member functions
+    //Precedence_factor helps determine positioning of a node in the list matrix based on a 2d representation of the list matrix.
+    //Will be multiplied by row or column based on the direction that positioning is being considered, across rows first and down columns second or vice versa.
+    //This multiplication product plus the other coordinate, row or column, gives a node a "numerical precedence" in list order.
+    int precedence_factor;
+
+    //Private setters are called when a new element is added
     void setMaxRow(int row);
     void setMaxCol(int col);
 
+    //Method to add an element to the list matrix
+    void addElement(int data, int row, int col);
+
+    //Reads a text file into the matrix object
+    void readFile(std::string file);
+
 public:
-    //The only and default constructor does not take in parameters.
+    //The default constructor exists to declare a result matrix
     Matrix();
 
-    //Returns the size of non-zero elements in the spare matrix
+    //Overloaded constructor initializes all data members to account for an empty list matrix and then reads in a file into the matrix object
+    Matrix(std::string file);
+
+    //Returns the size of non-zero elements in the list matrix
     int getSize();
+
+    //Getters are not used but can be used to check max list matrix dimensions
     int getMaxRow();
     int getMaxCol();
 
-    //Method to add an element to the matrix linked list
-    void addElement(int data, int row, int col);
-
-    //Prints the matrix in a 2d format in output
+    //Prints the list matrix in a 2d format in output
     void printMatrix();
 
-    //Reads a text file
-    void readFile(std::string file);
-
-    //Checks to see if two matrices can be multiplied and prints result if possible
+    //Overloaded "*" operator checks if this list matrix can be multiplied by one passed in and returns result if possible in the form of a Matrix object
     Matrix operator*(Matrix two);
-    //Checks to see if two matrices can be added and prints result if possible
+
+    //Overloaded "+" operator checks if this list matrix can be added to one passed in and returns result if possible in the form of a Matrix object
     Matrix operator+(Matrix two);
 
+    //Writes list matrix to a text file
+    void writeFile(std::string file);
 };
