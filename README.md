@@ -29,24 +29,30 @@ GIF Credit: https://matteding.github.io/2019/04/25/sparse-matrices/
 ## How to Compile and Run
 
 ### Linux (Debian-based)
-1. **Clone this repository in terminal**
+1. Install gcc, g++, make, SFML library, and git from the new terminal window
+
+    `sudo apt update && sudo apt install gcc g++ make libsfml-dev git`
+
+2. Clone this repository in terminal
 
     `git clone https://github.com/fherchuk/CSC212-Final-Project.git`
 
-2. **Go into the project directory**
+3. Go into the project directory
 
     `cd CSC212-Final-Project.git`
-3. **Compile** 
+
+4. Compile
 
     `make`
-4. **Run program**
+
+5. Run executable
 
     `./matrix_app {arguments}`
 
 ### MacOS (coming soon)
 
-### Windows (coming soon)
-1. **Enable "Windows Subsystem for Linux"**
+### Windows
+1. Enable **Windows Subsystem for Linux**
     
     Go to **Control Panel** > **Programs** > **Turn Windows features on or off** > Check the box for **Windows Subsystem for Linux**
 
@@ -68,7 +74,7 @@ GIF Credit: https://matteding.github.io/2019/04/25/sparse-matrices/
 
     ![Alt text](/images/win10-ubuntu-terminal.png)
 
-5. Install gcc, g++, make, SFML, and git from the new terminal window
+5. Install gcc, g++, make, SFML library, and git from the new terminal window
 
     `apt update && apt install gcc g++ make libsfml-dev git`
 
