@@ -1,5 +1,5 @@
 # CSC212 Final Project: Sparse Matrices with Linked Lists
-### *Created by Rick Herchuk, Lisandro Nunez, Demetri Petrou, Justin Watkins*   
+### *Created by Rick Herchuk, Lisandro Nunez, Demetrios Petrou, Justin Watkins*   
 
 ## Overview
 
