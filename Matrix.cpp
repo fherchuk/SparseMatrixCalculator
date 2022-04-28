@@ -163,6 +163,7 @@ void Matrix::deleteMatrix(Node* temp) {
 
 
 
+
 // Returns the size of non-zero elements in the list matrix
 int Matrix::getSize() {
     if (this->list_size == 0) {
@@ -539,8 +540,6 @@ void Matrix::readFile(std::string file_name) {
 
 
 // Generates a random list matrix based on user inputs for dimensions, bounds on the data, and number of nonzero elements
-// WARNING: To read in the generated matrix correctly, it must be written to a text file and read to a new Matrix object before using it for addition and multiplication.
-// Since this is not the focus of the project, it was not made a priority to resolve, but it was still used for generating datasets for testing, though slowly.
 void Matrix::randomMatrix(int rows, int columns, int lower_bound, int upper_bound, int nonzero) {
 
     // Delete the current list matrix in case it is being overwritten
@@ -569,4 +568,35 @@ void Matrix::randomMatrix(int rows, int columns, int lower_bound, int upper_boun
     // Set the dimensions based on user input to be sure it is correct
     setMaxCol(columns - 1);
     setMaxRow(rows - 1);
+
+    // Set below (Node) and head_vertical (Matrix) pointers to facilitate matrix multiplication.
+    // These will allow for traversal in column-major order.
+    // Set a temp1 node pointer to head. The below pointer of temp1 will be determined as the list matrix is iterated
+    Node* temp1 = this->head;
+
+    // Set the head_vertical as the normal head
+    this->head_vertical = this->head;
+
+    // Traverse through each node, setting its below pointer.
+    while (temp1 != nullptr) {
+
+        // Set a temp2 node pointer to head as well to traverse through the rest of the list to find which node is below the temp1 node
+        Node* temp2 = this->head;
+
+        // Use the precedence_factor again but in terms of column-major order.
+        while (temp2 != nullptr) {
+
+            // If the temp2 node has a higher column-major precedence than temp1 AND temp1 does not have a below node or temp2 is closer in terms of row-major order than temp1's current below node, set temp2 as temp1's below node.
+            if (temp2->row + temp2->col * this->precedence_factor > temp1->row + temp1->col * this->precedence_factor && (temp1->below == nullptr || temp2->row + temp2->col * this->precedence_factor < temp1->below->row + temp1->below->col * this->precedence_factor)) {
+                temp1->below = temp2;
+            }
+
+            // If the temp2 node is closer to the start (up and to the left) than the current head_vertical, set temp2 as the head_vertical.
+            if (temp2->row + temp2->col * this->precedence_factor < this->head_vertical->row + this->head_vertical->col * this->precedence_factor) {
+                this->head_vertical = temp2;
+            }
+            temp2 = temp2->next;
+        }
+        temp1 = temp1->next;
+    }
 }
