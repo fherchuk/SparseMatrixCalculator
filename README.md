@@ -11,10 +11,11 @@ Using a linked list allows for only having to store the nonzero elements and the
 ![Alt Text](https://matteding.github.io/images/coo.gif)
 
 GIF Credit: https://matteding.github.io/2019/04/25/sparse-matrices/
+
 ## How to Compile and Run
 
-### Linux (Debian-based)
-1. Install gcc, g++, make, SFML library, and git from the new terminal window
+### Linux (Ubuntu/Debian/Debian-based)
+1. Install gcc, g++, make, SFML library, and git in terminal
 
     `sudo apt update && sudo apt install gcc g++ make libsfml-dev git`
 
@@ -24,65 +25,17 @@ GIF Credit: https://matteding.github.io/2019/04/25/sparse-matrices/
 
 3. Go into the project directory
 
-    `cd CSC212-Final-Project.git`
+    `cd CSC212-Final-Project/Sparse\ Matrix\ Final\ CSC212/`
 
 4. Compile
 
     `make`
 
-5. Run executable
+5. Run executable, then window with GUI will appear
 
-    `./matrix_app {arguments}`
+    `./matrix_gui`
 
-### MacOS (coming soon)
+    ![GUI window](images/readme-gui-window.png)
 
-### Windows
-1. Enable **Windows Subsystem for Linux**
-    
-    Go to **Control Panel** > **Programs** > **Turn Windows features on or off** > Check the box for **Windows Subsystem for Linux**
-
-    ![Alt text](/images/win10-control-panel.webp)
-
-    ![Alt text](/images/win10-control-panel-2.webp)
-
-    ![Alt text](/images/win10-subsystem-checkbox.png)
-
-2. Restart
-
-3. Open the Microsoft Store application and install the **Ubuntu** program
-
-    ![Alt text](/images/win10-ubuntu-store-page.png)
-
-4. Open **Ubuntu** from the start menu. After it finishes setting up, you should see a BASH terminal.
-
-    ![Alt text](/images/win10-ubuntu-start-menu.png)
-
-    ![Alt text](/images/win10-ubuntu-terminal.png)
-
-5. Install gcc, g++, make, SFML library, and git from the new terminal window
-
-    `apt update && apt install gcc g++ make libsfml-dev git`
-
-6. Clone this repository in terminal
-
-    `git clone https://github.com/fherchuk/CSC212-Final-Project.git`
-    
-7. Go into the project directory
-
-    `cd CSC212-Final-Project.git`
-8. Compile using make
-
-    `make`
-
-9. Run executable
-
-    `./matrix_app {arguments}`
-
-
-### Visual Studio Testing
+### Visual Studio Community Testing
 If you would like to test the functionality of the individual functions in the matrix classes via a main function, the repository can be cloned from Visual Studio, and the sln file will be available to open and use. The main.cpp file is mostly empty and can be used to test the classes. A Matrix or MatrixVector object can be created and the methods can be used with the help of the comments.
-   
-
-    
-
-    
