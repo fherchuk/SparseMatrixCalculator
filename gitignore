@@ -1,0 +1,9 @@
+# Ignore build artifacts
+bin/
+obj/
+
+# Visual Studio Code
+.vscode/
+
+# Compiled Object files
+*.o
