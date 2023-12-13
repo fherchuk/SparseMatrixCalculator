@@ -6,8 +6,8 @@
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[]) {
 
-		Matrix m("test1.txt");
-		Matrix n("test2.txt");
+		Matrix m("test/matrix1.txt");
+		Matrix n("test/matrix2.txt");
 
 
 		(n+m).printMatrix();
