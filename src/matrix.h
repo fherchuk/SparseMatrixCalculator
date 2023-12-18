@@ -43,8 +43,11 @@ public:
     //Overloaded constructor initializes all data members to account for an empty list matrix and then reads in a file into the matrix object
     Matrix(std::string file);
 
+    //copy constructor
+    Matrix(const Matrix& other);
+
     //Returns the size of non-zero elements in the list matrix
-    int getSize();
+    int getSize() const;
 
     //Getters are not used but can be used to check max list matrix dimensions
     int getMaxRow();
@@ -56,10 +59,12 @@ public:
     void printMatrix();
 
     //Overloaded "*" operator checks if this list matrix can be multiplied by one passed in and returns result if possible in the form of a Matrix object
-    Matrix operator*(Matrix two);
+    Matrix operator*(const Matrix& other);
 
     //Overloaded "+" operator checks if this list matrix can be added to one passed in and returns result if possible in the form of a Matrix object
-    Matrix operator+(Matrix two);
+    Matrix operator+(const Matrix& other);
+
+    bool operator=(const Matrix& other);
 
     //Writes list matrix to a text file
     void writeFile(std::string file);

@@ -5,8 +5,6 @@
 #include <chrono>
 
 
-
-
 // Default constructor initializes empty list matrix
 Matrix::Matrix() {
     this->head = nullptr;
@@ -17,10 +15,6 @@ Matrix::Matrix() {
     this->max_col_index = 0;
     this->precedence_factor = 0;
 }
-
-
-
-
 // Overloaded constructor initializes empty list matrix and then reads in a text file to the list matrix
 Matrix::Matrix(std::string file) {
     this->head = nullptr;
@@ -32,62 +26,24 @@ Matrix::Matrix(std::string file) {
     this->precedence_factor = 0;
     readFile(file);
 }
-
-
-
-
-/*Matrix::~Matrix() {
-
-    Node* temp = this->head;
-
-    // Return if the end of the list is reached
-    while (temp != nullptr && temp->next != nullptr) {
-        temp = temp->next;
-        delete temp->previous;
-    }
-
-    delete this->head;
-
-    this->list_size = 0;
-    this->max_col_index = 0;
-    this->max_row_index = 0;
-    this->precedence_factor = 0;
-    this->head = nullptr;
-    this->head_vertical = nullptr;
-}*/
-
-
-
-
 // Private setter for row length
 void Matrix::setMaxRow(unsigned int row) {
     this->max_row_index = row;
 }
-
-
-
-
 // Private setter for column length
 void Matrix::setMaxCol(unsigned int col) {
     this->max_col_index = col;
 }
-
-
-
-
 // Adds element to list matrix
 void Matrix::addElement(int data, unsigned int row, unsigned int col) {
-
     // Set the new row size based on new node
     if (row > max_row_index) {
         setMaxRow(row);
     }
-
     // Set the new column size based on new node
     if (col > max_col_index) {
         setMaxCol(col);
     }
-
     // Set the precedence factor based on the higher of row and column size plus one to ensure precedence is always large enough
     if (this->max_col_index > this->max_row_index) {
         this->precedence_factor = this->max_col_index + 1;
@@ -95,26 +51,21 @@ void Matrix::addElement(int data, unsigned int row, unsigned int col) {
     else {
         this->precedence_factor = this->max_row_index + 1;
     }
-
     // Declare a new_node to be added to the list matrix
     Node* new_node = new Node(data, row, col, nullptr, nullptr);
-
     // Set a curr node pointer to point to the list matrix head
     Node* curr = this->head;
-
     // If the list matrix is empty, make the new_node the head and return
     if (this->list_size == 0) {
         this->head = new_node;
         this->list_size++;
         return;
     }
-
     // Iterate through list matrix in row-major order to find the spot the new_node belongs based on its numerical precedence.
     // If end of list is reached, add the new_node to the end of the list matrix.
     while (curr->next != nullptr && (curr->row * this->precedence_factor + curr->col < new_node->row * this->precedence_factor + new_node->col)) {
         curr = curr->next;
     }
-
     // If the curr and new_node nodes have equal precedence (same coordinates), replace the curr node with the new_node
     if (curr->row * this->precedence_factor + curr->col == new_node->row * this->precedence_factor + new_node->col) {
         if (curr->previous != nullptr) {
@@ -129,7 +80,6 @@ void Matrix::addElement(int data, unsigned int row, unsigned int col) {
             //this->tail = new_node;
         }
     }
-
     // If the precedence of the curr node is larger than the new_node, squeeze the new_node in right behind the curr node
     else if (curr->row * this->precedence_factor + curr->col > new_node->row * this->precedence_factor + new_node->col) {
         if (curr->previous != nullptr) {
@@ -152,53 +102,34 @@ void Matrix::addElement(int data, unsigned int row, unsigned int col) {
         this->list_size++;
     }
 }
-
-
-
-
-//Deletes list matrix nodes
-/*void Matrix::deleteMatrix(Node* temp) {
-    this->~Matrix();
-}*/
-
-
+void checkError(int size){
+    if (size == 0){
+        throw std::runtime_error("Empty Matrix");
+    } 
+}
 
 
 // Returns the size of non-zero elements in the list matrix
-int Matrix::getSize() {
-    if (this->list_size == 0) {
-        std::cout << "Please check matrix. It is emtpy." << std::endl;
-    }
+int Matrix::getSize() const {
+    try { 
+        checkError(this->list_size);
+    } catch (const std::exception& e){ return 0; }
     return this->list_size;
 }
-
-
-
-
 // Unused getter for row dimension of list matrix
 int Matrix::getMaxRow() {
-    if (this->list_size == 0) {
-        std::cout << "Please check matrix. It is empty" << std::endl;
-        return 0;
-    }
+    try { 
+        checkError(this->list_size);
+    } catch (const std::exception& e){ return 0; }
     return this->max_row_index + 1;
 }
-
-
-
-
 // Unused getter for column dimension of list matrix
 int Matrix::getMaxCol() {
-    if (this->list_size == 0) {
-        std::cout << "Please check matrix. It is empty" << std::endl;
-        return 0;
-    }
+    try { 
+        checkError(this->list_size);
+    } catch (const std::exception& e){ return 0; }
     return this->max_col_index + 1;
 }
-
-
-
-
 // Prints the list matrix
 void Matrix::printMatrix() {
 
@@ -206,10 +137,9 @@ void Matrix::printMatrix() {
     Node* curr = this->head;
     curr = this->head;
 
-    if (this->list_size == 0) {
-        std::cout << "Please check matrix. It is emtpy.";
-        return;
-    }
+    try { 
+        checkError(this->list_size);
+    } catch (const std::exception& e){ return; }
 
     // Iterate through list and print next node.data when its coordinates are reached with the loop control variables.
     // Otherwise, print 0.
@@ -230,15 +160,15 @@ void Matrix::printMatrix() {
 
 
 
-// Returns the resultant matrix when this Matrix is multiplied by a Matrix two
-// Operation will be referred to as Matrix one times Matrix two.
-Matrix Matrix::operator*(Matrix two) {
+// Returns the resultant matrix when this Matrix is multiplied by a Matrix other
+// Operation will be referred to as Matrix one times Matrix other.
+Matrix Matrix::operator*(const Matrix& other) {
 
     // Declare an empty result Matrix
     Matrix result;
 
-    // If the matrix dimensions do not match for one and two, return the empty result matrix and notify user
-    if (this->max_col_index != two.max_row_index || this->head == nullptr || two.head == nullptr) {
+    // If the matrix dimensions do not match for one and other, return the empty result matrix and notify user
+    if (this->max_col_index != other.max_row_index || this->head == nullptr || other.head == nullptr) {
         std::cout << "Matrix dimensions do not match or an empty matrix has been passed." << std::endl;
         return result;
     }
@@ -248,53 +178,53 @@ Matrix Matrix::operator*(Matrix two) {
 
         // Set the result dimensions based on the multiplicands' dimensions
         result.setMaxRow(this->max_row_index);
-        result.setMaxCol(two.max_col_index);
+        result.setMaxCol(other.max_col_index);
 
         // Declare a curr_one node pointer to track movement in row-major order of Matrix one
         Node* curr_one = this->head;
 
-        // Declare a curr_two node pointer to track movement in column-major order of Matrix two
-        Node* curr_two = two.head_vertical;
+        // Declare a curr_other node pointer to track movement in column-major order of Matrix other
+        Node* curr_other = other.head_vertical;
 
         // Iterate through matrix dimensions to perform operations and add nodes to result Matrix where necessary
         for (unsigned int i = 0; i <= this->max_row_index; i++) {
-            for (unsigned int j = 0; j <= two.max_col_index; j++) {
+            for (unsigned int j = 0; j <= other.max_col_index; j++) {
 
-                // If either curr_one or curr_two trackers have reached the end of the list matrix in their corresponding orders, break out of the current j loop and continue to the next row
-                if (curr_one == nullptr || curr_two == nullptr) {
+                // If either curr_one or curr_other trackers have reached the end of the list matrix in their corresponding orders, break out of the current j loop and continue to the next row
+                if (curr_one == nullptr || curr_other == nullptr) {
                     break;
                 }
 
                 // Declare a secondary curr_one_a node pointer to traverse across a row as a cell is being calculated
                 Node* curr_one_a = curr_one;
 
-                // Declare a secondary curr_two_a node pointer to traverse down a column as a cell is being calculated
-                Node* curr_two_a = curr_two;
+                // Declare a secondary curr_other_a node pointer to traverse down a column as a cell is being calculated
+                Node* curr_other_a = curr_other;
 
                 // Declare a sum variable to add together the necessary multiplications as a cell is being calculated
                 int sum = 0;
 
-                // Iterate through corresponding rows in Matrix one and columns in Matrix two to calculate each cell in result
+                // Iterate through corresponding rows in Matrix one and columns in Matrix other to calculate each cell in result
                 for (unsigned int k = 0; k <= this->max_col_index; k++) {
 
-                    // If neither curr_one_a or curr_two_a are nullptrs and they are both at the corresponding indices to be added to the sum for the current cell, multiply their data and traverse to their next nodes.
-                    if (curr_one_a != nullptr && curr_two_a != nullptr && curr_one_a->row == i && curr_one_a->col == k && curr_two_a->row == k && curr_two_a->col == j) {
-                        sum += curr_one_a->data * curr_two_a->data;
+                    // If neither curr_one_a or curr_other_a are nullptrs and they are both at the corresponding indices to be added to the sum for the current cell, multiply their data and traverse to their next nodes.
+                    if (curr_one_a != nullptr && curr_other_a != nullptr && curr_one_a->row == i && curr_one_a->col == k && curr_other_a->row == k && curr_other_a->col == j) {
+                        sum += curr_one_a->data * curr_other_a->data;
                         curr_one_a = curr_one_a->next;
-                        curr_two_a = curr_two_a->below;
+                        curr_other_a = curr_other_a->below;
                     }
 
-                    // If neither curr_one_a or curr_two_a are nullptrs and they have not passed into the next row or column, check if traversal is needed for either of them.
-                    if (curr_one_a != nullptr && curr_two_a != nullptr && curr_one_a->row == i && curr_two_a->col == j) {
+                    // If neither curr_one_a or curr_other_a are nullptrs and they have not passed into the next row or column, check if traversal is needed for either of them.
+                    if (curr_one_a != nullptr && curr_other_a != nullptr && curr_one_a->row == i && curr_other_a->col == j) {
 
                         // If curr_one_a's column index is less than or equal to the k control variable, traverse to the next node.
                         if (curr_one_a->col <= k) {
                             curr_one_a = curr_one_a->next;
                         }
 
-                        // If curr_two_a's row index is less than or equal to the k control variable, traverse to the next node.
-                        if (curr_two_a->row <= k) {
-                            curr_two_a = curr_two_a->below;
+                        // If curr_other_a's row index is less than or equal to the k control variable, traverse to the next node.
+                        if (curr_other_a->row <= k) {
+                            curr_other_a = curr_other_a->below;
                         }
                     }
 
@@ -304,9 +234,9 @@ Matrix Matrix::operator*(Matrix two) {
                     }
                 }
 
-                // Traverse to the first cell in the next column with curr_two.
-                while (curr_two != nullptr && curr_two->col <= j) {
-                    curr_two = curr_two->below;
+                // Traverse to the first cell in the next column with curr_other.
+                while (curr_other != nullptr && curr_other->col <= j) {
+                    curr_other = curr_other->below;
                 }
 
                 // If the sum > 0, add it to the list matrix.
@@ -319,8 +249,8 @@ Matrix Matrix::operator*(Matrix two) {
                 curr_one = curr_one->next;
             }
 
-            //Reset curr_two to the head_vertical of Matrix two to start it all over
-            curr_two = two.head_vertical;
+            //Reset curr_other to the head_vertical of Matrix other to start it all over
+            curr_other = other.head_vertical;
         }
     }
     return result;
@@ -328,15 +258,15 @@ Matrix Matrix::operator*(Matrix two) {
 
 
 
-// Returns the resultant matrix when this Matrix is added to a Matrix two
-// Operation will be referred to as Matrix one plus Matrix two.
-Matrix Matrix::operator+(Matrix two) {
+// Returns the resultant matrix when this Matrix is added to a Matrix other
+// Operation will be referred to as Matrix one plus Matrix other.
+Matrix Matrix::operator+(const Matrix& other) {
 
     // Declare a result matrix
     Matrix result;
 
-    // If the dimensions of the two matrices do not match, throw an error and return the empty result matrix
-    if (this->max_row_index != two.max_row_index || this->max_col_index != two.max_col_index || this->head == nullptr || two.head == nullptr) {
+    // If the dimensions of the other matrices do not match, throw an error and return the empty result matrix
+    if (this->max_row_index != other.max_row_index || this->max_col_index != other.max_col_index || this->head == nullptr || other.head == nullptr) {
         std::cout << "Matrix dimensions do not match or an empty matrix has been passed." << std::endl;
         return result;
     }
@@ -344,13 +274,13 @@ Matrix Matrix::operator+(Matrix two) {
     // Otherwise, do the operation
     else {
 
-        // Set the dimensions of the result matrix using the dimensions of Matrix one (or two)
+        // Set the dimensions of the result matrix using the dimensions of Matrix one (or other)
         result.setMaxRow(this->max_row_index);
         result.setMaxCol(this->max_col_index);
 
-        // Delcare two node pointers to traverse through the list matrices
+        // Delcare other node pointers to traverse through the list matrices
         Node* curr_one = head;
-        Node* curr_two = two.head;
+        Node* curr_other = other.head;
 
         // Iterate through all matrix cell indices to see if an addition is needed
         for (unsigned int i = 0; i <= max_row_index; i++) {
@@ -359,34 +289,34 @@ Matrix Matrix::operator+(Matrix two) {
                 // Declare a sum variable for each matrix cell
                 int sum = 0;
 
-                // If the current elements in the two lists have equal coordinates, add them
-                if (curr_one->row == i && curr_one->col == j && curr_two->row == i && curr_two->col == j) {
+                // If the current elements in the other lists have equal coordinates, add them
+                if (curr_one->row == i && curr_one->col == j && curr_other->row == i && curr_other->col == j) {
 
                     // Perform the addition
-                    sum = curr_one->data + curr_two->data;
+                    sum = curr_one->data + curr_other->data;
 
                     // Traverse to the next nodes of both matrices as long as they are not nullptrs
                     if (curr_one->next != nullptr) {
                         curr_one = curr_one->next;
                     }
-                    if (curr_two->next != nullptr) {
-                        curr_two = curr_two->next;
+                    if (curr_other->next != nullptr) {
+                        curr_other = curr_other->next;
                     }
                 }
 
                 // If the loop indices match the coordinates of one of the current elements in list matrix one, designate this element data as the sum and iterate to the next node of list matrix one
-                else if ((curr_one->row == i && curr_one->col == j) && (curr_two->row != i || curr_two->col != j)) {
+                else if ((curr_one->row == i && curr_one->col == j) && (curr_other->row != i || curr_other->col != j)) {
                     sum = curr_one->data;
                     if (curr_one->next != nullptr) {
                         curr_one = curr_one->next;
                     }
                 }
 
-                // If the loop indices match the coordinates of one of the current elements in list matrix two, designate this element data as the sum and iterate to the next node of list matrix two
-                else if ((curr_one->row != i || curr_one->col != j) && curr_two->row == i && curr_two->col == j) {
-                    sum = curr_two->data;
-                    if (curr_two->next != nullptr) {
-                        curr_two = curr_two->next;
+                // If the loop indices match the coordinates of one of the current elements in list matrix other, designate this element data as the sum and iterate to the next node of list matrix other
+                else if ((curr_one->row != i || curr_one->col != j) && curr_other->row == i && curr_other->col == j) {
+                    sum = curr_other->data;
+                    if (curr_other->next != nullptr) {
+                        curr_other = curr_other->next;
                     }
                 }
 
@@ -403,7 +333,12 @@ Matrix Matrix::operator+(Matrix two) {
 }
 
 
-
+bool Matrix::operator=(const Matrix& other) {
+    if (getSize() != other.getSize()){
+        return false;
+    }
+return true;
+}
 
 // Writes a list matrix to a text file
 void Matrix::writeFile(std::string file) {
@@ -412,10 +347,10 @@ void Matrix::writeFile(std::string file) {
     Node* temp = this->head;
 
     // If the matrix list is empty, stop
-    if (this->list_size == 0) {
-        std::cout << "Please check matrix. It is empty." << std::endl;
-        return;
-    }
+    try { 
+        checkError(this->list_size);
+    } catch (const std::exception& e){ return; }
+
 
     // Open the outfile file and prepare it for writing
     std::ofstream output_file(file);
@@ -460,7 +395,6 @@ void Matrix::readFile(std::string file_name) {
 
     // If there is no file with the given name to read, stop
     if (!file) {
-        std::cout << "Invalid file name provided." << std::endl;
         return;
     }
 
@@ -554,7 +488,7 @@ void Matrix::randomMatrix(int rows, int columns, int lower_bound, int upper_boun
     std::uniform_int_distribution<int> data_distr(lower_bound, upper_bound);
     
     // Add elements based on the amount of nonzero elements desired
-    for (int i = 0; i < nonzero; i++) {
+    while(getSize() != nonzero) {
 
         // Make sure that data being added is nonzero
         int candidate_data = 0;
