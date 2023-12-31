@@ -1,6 +1,7 @@
 #include "node.h"
-//Node constructor
-Node::Node(int data, unsigned int row, unsigned int col, Node* next, Node* previous) {
+// Node constructor
+Node::Node(int data, unsigned int row, unsigned int col, Node *next, Node *previous)
+{
     this->data = data;
     this->next = next;
     this->previous = previous;
@@ -9,16 +10,21 @@ Node::Node(int data, unsigned int row, unsigned int col, Node* next, Node* previ
     this->below = nullptr;
 }
 
-Node* Node::getNext() {
+Node *Node::getNext()
+{
     return this->next;
 }
-int Node::getRow() {
+
+int Node::getRow()
+{
     return this->row;
 }
-int Node::getCol() {
+int Node::getCol()
+{
     return this->col;
 }
 
-int Node::getData() {
+int Node::getData()
+{
     return this->data;
 }
